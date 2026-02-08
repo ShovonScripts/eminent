@@ -259,7 +259,7 @@ Please respond to this enquiry within 24 hours.
             $confirmMail->Host = 'mail.eminentoverseas.uk';
             $confirmMail->SMTPAuth = true;
             $confirmMail->Username = 'info@eminentoverseas.uk';
-            $confirmMail->Password = 'Pele@2468';
+            $confirmMail->Password = '';
             $confirmMail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $confirmMail->Port = 465;
             $confirmMail->CharSet = 'UTF-8';
