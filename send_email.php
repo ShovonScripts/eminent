@@ -222,7 +222,7 @@ Please respond to this enquiry within 24 hours.
         $mail->Host = 'mail.eminentoverseas.uk'; // From manual settings
         $mail->SMTPAuth = true;
         $mail->Username = 'info@eminentoverseas.uk'; // From manual settings
-        $mail->Password = 'Pele@2468'; // Using the password from your comment
+        $mail->Password = '-'; // Using the password from your comment
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL/TLS encryption
         $mail->Port = 465; // SMTP port from manual settings
         
