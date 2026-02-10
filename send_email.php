@@ -262,7 +262,7 @@ function sendWithPHPMailer($to, $subject, $htmlBody, $plainBody, $replyEmail, $f
         $mail->Host = 'mail.eminentoverseas.uk';
         $mail->SMTPAuth = true;
         $mail->Username = 'info@eminentoverseas.uk';
-        $mail->Password = 'Pele@2468';
+        $mail->Password = '-';
         $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = 465;
         $mail->CharSet = 'UTF-8';
