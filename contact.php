@@ -404,7 +404,7 @@
       "postalCode": "1212",
       "addressCountry": "Bangladesh"
     },
-    "telephone": "+880 XXXX-XXXXXX",
+    "telephone": "+880 1717-038501",
     "email": "info@eminentoverseas.uk",
     "openingHours": "Sa-Th 10:00-18:00",
     "url": "https://eminentoverseas.uk",
@@ -551,7 +551,7 @@
                   <h5 data-en="Call Us" data-ja="お電話で">Call Us</h5>
                   <p>
                     <a href="tel:+880XXXXXXXXXX" class="contact-link">
-                      +880 XXXX-XXXXXX
+                      +880 1717-038501
                     </a>
                   </p>
                 </div>
@@ -906,7 +906,7 @@
               <i class="fas fa-phone mt-1 me-3" style="color: var(--primary-600);"></i>
               <div>
                 <div class="fw-bold small" data-en="Phone/WhatsApp" data-ja="電話/WhatsApp">Phone/WhatsApp</div>
-                <a href="tel:+880XXXXXXXXXX" class="footer-link">+880 XXXX-XXXXXX</a>
+                <a href="tel:+880XXXXXXXXXX" class="footer-link">+880 1717-038501</a>
                 <div class="text-tertiary small mt-1" data-en="Call or message for appointment" data-ja="予約のためにお電話またはメッセージを">Call or message for appointment</div>
               </div>
             </div>
@@ -959,13 +959,13 @@
             "Contact Eminent Overseas & Consultants | Book Your Free Consultation | Dhaka Office",
             "Japan & UK Study Guidance | Ethical Counseling | No Visa Guarantees | Transparent Process",
             "Visit Our Office: 16/9, Indira Road, Dhaka | Sat-Thu: 10:00 AM - 6:00 PM",
-            "Call/WhatsApp: +880 XXXX-XXXXXX | Email: info@eminentoverseas.uk"
+            "Call/WhatsApp: +880 1717-038501 | Email: info@eminentoverseas.uk"
           ],
           ja: [
             "エミネント海外留学コンサルタントにお問い合わせ | 無料相談予約 | ダッカオフィス",
             "日本・英国留学ガイダンス | 倫理的カウンセリング | ビザ保証なし | 透明なプロセス",
             "オフィス訪問: 16/9 インディラ通り, ダッカ | 土-木: 午前10時 - 午後6時",
-            "電話/WhatsApp: +880 XXXX-XXXXXX | メール: info@eminentoverseas.uk"
+            "電話/WhatsApp: +880 1717-038501 | メール: info@eminentoverseas.uk"
           ]
         };
         window.app.languageManager.updateMarquee();
@@ -974,3 +974,4 @@
   </script>
 </body>
 </html>
+

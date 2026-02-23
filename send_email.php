@@ -16,8 +16,8 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/error.log');
 
 // Check if it's an AJAX request
-$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+    strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
 // Only accept POST requests
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -31,7 +31,8 @@ if (!empty($_POST['honeypot'])) {
     if ($isAjax) {
         header('Content-Type: application/json');
         echo json_encode(['status' => 'error', 'message' => 'Spam detected']);
-    } else {
+    }
+    else {
         http_response_code(403);
         die('Invalid submission');
     }
@@ -53,7 +54,8 @@ if (isset($_SESSION[$rateLimitKey])) {
                 'status' => 'error',
                 'message' => "Please wait {$waitTime} seconds before submitting again."
             ]);
-        } else {
+        }
+        else {
             http_response_code(429);
             echo "Please wait before submitting again.";
         }
@@ -74,7 +76,7 @@ try {
         __DIR__ . '/../vendor/autoload.php',
         __DIR__ . '/../../vendor/autoload.php',
     ];
-    
+
     foreach ($phpmailerPaths as $path) {
         if (file_exists($path)) {
             require_once $path;
@@ -84,15 +86,18 @@ try {
             }
         }
     }
-} catch (Exception $e) {
+}
+catch (Exception $e) {
     error_log("PHPMailer load error: " . $e->getMessage());
 }
 
 /**
  * Clean and sanitize input data
  */
-function clean_input($data) {
-    if (empty($data)) return '';
+function clean_input($data)
+{
+    if (empty($data))
+        return '';
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
@@ -102,15 +107,17 @@ function clean_input($data) {
 /**
  * Validate email address
  */
-function validate_email($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) && 
-           preg_match('/@.+\./', $email);
+function validate_email($email)
+{
+    return filter_var($email, FILTER_VALIDATE_EMAIL) &&
+        preg_match('/@.+\./', $email);
 }
 
 /**
  * Validate phone number
  */
-function validate_phone($phone) {
+function validate_phone($phone)
+{
     // Remove all non-numeric characters
     $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
     // Must be between 10-15 digits
@@ -168,7 +175,8 @@ if (!empty($errors)) {
             'status' => 'error',
             'errors' => $errors
         ]);
-    } else {
+    }
+    else {
         http_response_code(400);
         displayErrorPage($errors);
     }
@@ -209,7 +217,8 @@ $errorMessage = '';
 
 if ($usePHPMailer) {
     $emailSent = sendWithPHPMailer($to_email, $subject, $htmlBody, $plainBody, $email, $firstName, $lastName, $countryDisplay, $errorMessage);
-} else {
+}
+else {
     $emailSent = sendWithMailFunction($to_email, $subject, $htmlBody, $email, $errorMessage);
 }
 
@@ -217,7 +226,7 @@ if ($usePHPMailer) {
 if ($emailSent) {
     // Log successful submission
     error_log("Form submitted successfully by: {$firstName} {$lastName} ({$email})");
-    
+
     if ($isAjax) {
         header('Content-Type: application/json');
         echo json_encode([
@@ -225,13 +234,15 @@ if ($emailSent) {
             'message' => "Thank you! Your enquiry has been submitted. We'll contact you within 24 hours.",
             'redirect' => 'thank-you.html?ref=' . urlencode($email) . '&name=' . urlencode($firstName)
         ]);
-    } else {
+    }
+    else {
         header('Location: thank-you.html?ref=' . urlencode($email) . '&name=' . urlencode($firstName));
     }
-} else {
+}
+else {
     // Log error
     error_log("Email send failed: {$errorMessage}");
-    
+
     if ($isAjax) {
         header('Content-Type: application/json');
         http_response_code(500);
@@ -239,7 +250,8 @@ if ($emailSent) {
             'status' => 'error',
             'message' => 'Failed to send your enquiry. Please try again or contact us directly at info@eminentoverseas.uk'
         ]);
-    } else {
+    }
+    else {
         displayEmailErrorPage();
     }
 }
@@ -253,10 +265,11 @@ exit;
 /**
  * Send email using PHPMailer
  */
-function sendWithPHPMailer($to, $subject, $htmlBody, $plainBody, $replyEmail, $firstName, $lastName, $country, &$errorMessage) {
+function sendWithPHPMailer($to, $subject, $htmlBody, $plainBody, $replyEmail, $firstName, $lastName, $country, &$errorMessage)
+{
     try {
         $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-        
+
         // Server settings
         $mail->isSMTP();
         $mail->Host = 'mail.eminentoverseas.uk';
@@ -266,7 +279,7 @@ function sendWithPHPMailer($to, $subject, $htmlBody, $plainBody, $replyEmail, $f
         $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = 465;
         $mail->CharSet = 'UTF-8';
-        
+
         // Disable SSL verification if needed (not recommended for production)
         // $mail->SMTPOptions = array(
         //     'ssl' => array(
@@ -275,25 +288,26 @@ function sendWithPHPMailer($to, $subject, $htmlBody, $plainBody, $replyEmail, $f
         //         'allow_self_signed' => true
         //     )
         // );
-        
+
         // Recipients
         $mail->setFrom('info@eminentoverseas.uk', 'Eminent Overseas Contact Form');
         $mail->addAddress($to, 'Eminent Overseas Team');
         $mail->addReplyTo($replyEmail, $firstName . ' ' . $lastName);
-        
+
         // Content
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $htmlBody;
         $mail->AltBody = $plainBody;
-        
+
         $mail->send();
-        
+
         // Send confirmation email to customer
         sendConfirmationEmail($replyEmail, $firstName, $country);
-        
+
         return true;
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
         $errorMessage = "PHPMailer Error: " . $e->getMessage();
         error_log($errorMessage);
         return false;
@@ -303,10 +317,11 @@ function sendWithPHPMailer($to, $subject, $htmlBody, $plainBody, $replyEmail, $f
 /**
  * Send confirmation email to customer
  */
-function sendConfirmationEmail($email, $firstName, $country) {
+function sendConfirmationEmail($email, $firstName, $country)
+{
     try {
         $confirmMail = new PHPMailer\PHPMailer\PHPMailer(true);
-        
+
         $confirmMail->isSMTP();
         $confirmMail->Host = 'mail.eminentoverseas.uk';
         $confirmMail->SMTPAuth = true;
@@ -315,17 +330,18 @@ function sendConfirmationEmail($email, $firstName, $country) {
         $confirmMail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
         $confirmMail->Port = 465;
         $confirmMail->CharSet = 'UTF-8';
-        
+
         $confirmMail->setFrom('info@eminentoverseas.uk', 'Eminent Overseas & Consultants');
         $confirmMail->addAddress($email, $firstName);
-        
+
         $confirmMail->isHTML(true);
         $confirmMail->Subject = 'Thank You for Contacting Eminent Overseas & Consultants';
         $confirmMail->Body = generateConfirmationEmail($firstName, $country);
-        $confirmMail->AltBody = "Thank you for contacting Eminent Overseas & Consultants!\n\nWe have received your enquiry. Our counselor will contact you within 24 hours.\n\nContact: +880 XXXX-XXXXXX\nAddress: 16/9, Indira Road, Dhaka 1212";
-        
+        $confirmMail->AltBody = "Thank you for contacting Eminent Overseas & Consultants!\n\nWe have received your enquiry. Our counselor will contact you within 24 hours.\n\nContact: +880 1717-038501\nAddress: 16/9, Indira Road, Dhaka 1212";
+
         $confirmMail->send();
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
         error_log("Confirmation email failed: " . $e->getMessage());
     }
 }
@@ -333,15 +349,17 @@ function sendConfirmationEmail($email, $firstName, $country) {
 /**
  * Send email using PHP's mail() function
  */
-function sendWithMailFunction($to, $subject, $htmlBody, $replyEmail, &$errorMessage) {
+function sendWithMailFunction($to, $subject, $htmlBody, $replyEmail, &$errorMessage)
+{
     $headers = "From: info@eminentoverseas.uk\r\n";
     $headers .= "Reply-To: {$replyEmail}\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
-    
+
     if (@mail($to, $subject, $htmlBody, $headers)) {
         return true;
-    } else {
+    }
+    else {
         $errorMessage = "PHP mail() function failed";
         return false;
     }
@@ -350,11 +368,12 @@ function sendWithMailFunction($to, $subject, $htmlBody, $replyEmail, &$errorMess
 /**
  * Generate HTML email for admin
  */
-function generateHtmlEmail($firstName, $lastName, $email, $phone, $country, $education, $message, $consent) {
+function generateHtmlEmail($firstName, $lastName, $email, $phone, $country, $education, $message, $consent)
+{
     $currentDate = date('F j, Y \a\t g:i A');
     $ipAddress = $_SERVER['REMOTE_ADDR'];
     $consentIcon = $consent === 'Yes' ? '✅ Granted' : '❌ Not Granted';
-    
+
     return <<<HTML
 <!DOCTYPE html>
 <html>
@@ -428,10 +447,11 @@ HTML;
 /**
  * Generate plain text email for admin
  */
-function generatePlainEmail($firstName, $lastName, $email, $phone, $country, $education, $message, $consent) {
+function generatePlainEmail($firstName, $lastName, $email, $phone, $country, $education, $message, $consent)
+{
     $currentDate = date('Y-m-d H:i:s');
     $ipAddress = $_SERVER['REMOTE_ADDR'];
-    
+
     return <<<PLAIN
 NEW CONTACT FORM ENQUIRY - EMINENT OVERSEAS
 =========================================
@@ -464,9 +484,10 @@ PLAIN;
 /**
  * Generate confirmation email for customer
  */
-function generateConfirmationEmail($firstName, $country) {
+function generateConfirmationEmail($firstName, $country)
+{
     $year = date('Y');
-    
+
     return <<<HTML
 <!DOCTYPE html>
 <html>
@@ -516,7 +537,7 @@ function generateConfirmationEmail($firstName, $country) {
             <div class="contact-info">
                 <h3>📍 Our Office Details</h3>
                 <p>🏢 <strong>Address:</strong> 16/9, Indira Road (Behind Tejgaon College), Dhaka 1212</p>
-                <p>📞 <strong>Phone:</strong> +880 XXXX-XXXXXX</p>
+                <p>📞 <strong>Phone:</strong> +880 1717-038501</p>
                 <p>🕐 <strong>Office Hours:</strong> Saturday - Thursday: 10:00 AM - 6:00 PM</p>
             </div>
             <p>Best regards,<br>
@@ -534,8 +555,9 @@ HTML;
 /**
  * Display error page
  */
-function displayErrorPage($errors) {
-    ?>
+function displayErrorPage($errors)
+{
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -556,7 +578,8 @@ function displayErrorPage($errors) {
             <ul class="mb-3">
                 <?php foreach ($errors as $error): ?>
                     <li><?php echo htmlspecialchars($error); ?></li>
-                <?php endforeach; ?>
+                <?php
+    endforeach; ?>
             </ul>
             <hr>
             <p class="mb-0">Please correct the errors and try again.</p>
@@ -571,8 +594,9 @@ function displayErrorPage($errors) {
 /**
  * Display email error page
  */
-function displayEmailErrorPage() {
-    ?>
+function displayEmailErrorPage()
+{
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -592,7 +616,7 @@ function displayEmailErrorPage() {
         <p>Please try one of the following:</p>
         <div class="alert alert-info mt-3">
             <p class="mb-2"><strong>Email:</strong> <a href="mailto:info@eminentoverseas.uk">info@eminentoverseas.uk</a></p>
-            <p class="mb-0"><strong>Phone:</strong> <a href="tel:+880XXXXXXXXXX">+880 XXXX-XXXXXX</a></p>
+            <p class="mb-0"><strong>Phone:</strong> <a href="tel:+880XXXXXXXXXX">+880 1717-038501</a></p>
         </div>
         <div class="mt-4">
             <a href="contact.php" class="btn btn-primary">Try Again</a>
